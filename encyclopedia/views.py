@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import HttpResponseRedirect
 import difflib
 import random
+from django.contrib import messages
 
 from . import util
 
@@ -32,6 +33,20 @@ def search(request):
         "results": results,
         "query": query
     })
+
+def create_page(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        if not content or not title: return HttpResponseRedirect('/create_page')
+        elif util.get_entry(title) != None:
+            messages.error(request, 'Title already exists!')
+            return HttpResponseRedirect('/create_page')
+        else:
+            util.save_entry(title, content)
+            return HttpResponseRedirect(f'/wiki/{title}')
+    else:
+        return render(request, "encyclopedia/create_page.html")
 
 def random_selector(request): 
     return HttpResponseRedirect(f'wiki/{random.choice(util.list_entries())}')
