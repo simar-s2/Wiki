@@ -6,4 +6,6 @@
 
 {% block body %}
    {{ entry }}
+
+   <a href="{% url 'edit_page' title=request.path|cut:"/"|slice:"4:" %}">Edit Page</a>
 {% endblock %}

@@ -50,3 +50,19 @@ def create_page(request):
 
 def random_selector(request): 
     return HttpResponseRedirect(f'wiki/{random.choice(util.list_entries())}')
+
+def edit_page(request, title):
+    if request.method == "POST":
+        content = request.POST.get('content')
+        print(content)
+        if not content:
+            messages.error(request, 'Page content cannot be empty!')
+            return HttpResponseRedirect(f'/edit/{title}')
+        else:
+            util.save_entry(title, content)
+            return HttpResponseRedirect(f'/wiki/{title}')
+            
+    return render(request, "encyclopedia/edit_page.html", {
+        "title":title,
+        "content":util.get_entry(title)
+    })
