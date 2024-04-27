@@ -3,6 +3,7 @@ from django.shortcuts import HttpResponseRedirect
 import difflib
 import random
 from django.contrib import messages
+import markdown2
 
 from . import util
 
@@ -13,8 +14,9 @@ def index(request):
     })
 
 def get_entry(request, title):
+    html_content = markdown2.markdown(util.get_entry(title))
     return render(request, "encyclopedia/entry.html", {
-        "entry": util.get_entry(title)
+        "entry": html_content,
     })
     
 def search(request):
@@ -61,7 +63,7 @@ def edit_page(request, title):
         else:
             util.save_entry(title, content)
             return HttpResponseRedirect(f'/wiki/{title}')
-            
+
     return render(request, "encyclopedia/edit_page.html", {
         "title":title,
         "content":util.get_entry(title)
